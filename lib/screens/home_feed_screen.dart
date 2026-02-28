@@ -145,6 +145,7 @@ class _FeedVideoPage extends StatefulWidget {
 class _FeedVideoPageState extends State<_FeedVideoPage> {
   VideoPlayerController? _controller;
   VoidCallback? _listener;
+  bool _showControls = false;
 
   @override
   void initState() {
@@ -181,6 +182,62 @@ class _FeedVideoPageState extends State<_FeedVideoPage> {
     if (_listener != null) _controller?.removeListener(_listener!);
     _controller?.dispose();
     super.dispose();
+  }
+
+  void _togglePlayPause() {
+    if (_controller == null) return;
+    setState(() {
+      _showControls = true;
+      if (_controller!.value.isPlaying) {
+        _controller!.pause();
+      } else {
+        _controller!.play();
+      }
+    });
+    _hideControlsAfterDelay();
+  }
+
+  void _seekRelative(double seconds) {
+    if (_controller == null) return;
+    final pos = _controller!.value.position + Duration(milliseconds: (seconds * 1000).round());
+    final dur = _controller!.value.duration;
+    _controller!.seekTo(pos.inMilliseconds > dur.inMilliseconds ? dur : (pos.inMilliseconds < 0 ? Duration.zero : pos));
+    setState(() => _showControls = true);
+    _hideControlsAfterDelay();
+  }
+
+  void _hideControlsAfterDelay() {
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted && _controller != null && _controller!.value.isPlaying && _showControls) {
+        setState(() => _showControls = false);
+      }
+    });
+  }
+
+  void _onVideoTap() {
+    if (!widget.isActive) return;
+    setState(() => _showControls = true);
+    _togglePlayPause();
+  }
+
+  static String _formatDuration(Duration d) {
+    final m = d.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final s = d.inSeconds.remainder(60).toString().padLeft(2, '0');
+    return '$m:$s';
+  }
+
+  Widget _centerControlButton({required IconData icon, required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.25),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, color: AppTheme.white, size: 40),
+      ),
+    );
   }
 
   @override
@@ -220,6 +277,142 @@ class _FeedVideoPageState extends State<_FeedVideoPage> {
             ),
           ),
         ),
+
+        // Tap area: play/pause (tránh che nút bên phải và dưới)
+        if (widget.isActive && _controller != null && _controller!.value.isInitialized)
+          Positioned(
+            left: 0,
+            right: 72,
+            top: 100,
+            bottom: 200,
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: _onVideoTap,
+            ),
+          ),
+
+        // Center controls: tua 10s | play/pause | tua +10s (khi pause hoặc khi đang hiện controls)
+        if (widget.isActive &&
+            _controller != null &&
+            _controller!.value.isInitialized &&
+            (_showControls || !_controller!.value.isPlaying))
+          Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _centerControlButton(
+                  icon: Icons.replay_10_rounded,
+                  onTap: () => _seekRelative(-10),
+                ),
+                const SizedBox(width: 16),
+                GestureDetector(
+                  onTap: _onVideoTap,
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.25),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      _controller!.value.isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                      color: AppTheme.white,
+                      size: 56,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                _centerControlButton(
+                  icon: Icons.forward_10_rounded,
+                  onTap: () => _seekRelative(10),
+                ),
+              ],
+            ),
+          ),
+
+        // Bottom video controls (progress, rewind, play, forward, time)
+        if (widget.isActive &&
+            _controller != null &&
+            _controller!.value.isInitialized &&
+            _showControls)
+          Positioned(
+            left: AppTheme.spacingLg,
+            right: AppTheme.spacingLg,
+            bottom: 160,
+            child: Material(
+              color: Colors.black54,
+              borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Progress bar (tap to seek)
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        final barWidth = constraints.maxWidth;
+                        return GestureDetector(
+                          onTapDown: (details) {
+                            if (_controller == null || barWidth <= 0) return;
+                            final ratio = (details.localPosition.dx / barWidth).clamp(0.0, 1.0);
+                            final dur = _controller!.value.duration;
+                            _controller!.seekTo(Duration(milliseconds: (dur.inMilliseconds * ratio).round()));
+                            setState(() {});
+                          },
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(2),
+                            child: LinearProgressIndicator(
+                              value: _controller!.value.duration.inMilliseconds > 0
+                                  ? _controller!.value.position.inMilliseconds /
+                                      _controller!.value.duration.inMilliseconds
+                                  : 0,
+                              backgroundColor: Colors.white24,
+                              valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primaryOrange),
+                              minHeight: 4,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          onPressed: () => _seekRelative(-10),
+                          icon: const Icon(Icons.replay_10_rounded),
+                          color: AppTheme.white,
+                          iconSize: 32,
+                        ),
+                        IconButton(
+                          onPressed: _togglePlayPause,
+                          icon: Icon(
+                            _controller!.value.isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                            size: 40,
+                          ),
+                          color: AppTheme.white,
+                          iconSize: 40,
+                        ),
+                        IconButton(
+                          onPressed: () => _seekRelative(10),
+                          icon: const Icon(Icons.forward_10_rounded),
+                          color: AppTheme.white,
+                          iconSize: 32,
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          '${_formatDuration(_controller!.value.position)} / ${_formatDuration(_controller!.value.duration)}',
+                          style: const TextStyle(
+                            color: AppTheme.white,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
 
         // Top-left: Restaurant name, rating, distance
         Positioned(
