@@ -1,0 +1,451 @@
+
+╔═══════════════════════════════════════════════════════════════╗
+║                  FOONFOOD - DESIGN SPECIFICATIONS              ║
+║                  Mobile App (Android + iOS)                    ║
+╚═══════════════════════════════════════════════════════════════╝
+
+📱 TARGET PLATFORMS:
+   - Android (Flutter Material Design)
+   - iOS (Flutter Cupertino widgets)
+   - Mobile-first design (428px width optimized)
+
+🎨 DESIGN STYLE:
+   - Modern, clean, minimalist
+   - iOS-inspired components
+   - Rounded corners, soft shadows
+   - Warm orange accent color
+   - TikTok-style immersive video feed
+
+
+═══════════════════════════════════════════════════════════════
+🎨 COLOR PALETTE
+═══════════════════════════════════════════════════════════════
+
+PRIMARY COLORS:
+  • Primary Orange:    #FF6B35  (Buttons, CTAs, Active states)
+  • Orange Dark:       #E85A28  (Hover, Pressed states)
+  • Orange Light:      #FFE5DC  (Backgrounds, Highlights)
+
+GRAYSCALE:
+  • White:            #FFFFFF  (Cards, Backgrounds)
+  • Gray 50:          #F9FAFB  (Page background)
+  • Gray 100:         #F3F4F6  (Dividers, Borders)
+  • Gray 200:         #E5E7EB  (Input borders)
+  • Gray 400:         #9CA3AF  (Secondary text)
+  • Gray 600:         #4B5563  (Body text)
+  • Gray 900:         #111827  (Headings, Primary text)
+
+STATUS COLORS:
+  • Success:          #10B981  (Success messages, completed)
+  • Error:            #EF4444  (Error messages, destructive)
+  • Warning:          #F59E0B  (Warnings, alerts)
+  • Info:             #3B82F6  (Info messages)
+
+
+═══════════════════════════════════════════════════════════════
+✏️ TYPOGRAPHY
+═══════════════════════════════════════════════════════════════
+
+FONT FAMILY:
+  • Primary: Sans-serif system font
+  • iOS: SF Pro / San Francisco
+  • Android: Roboto
+  • Web: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto
+
+TEXT STYLES:
+
+  Heading 1:
+    - Size: 30px (24pt)
+    - Weight: 700 (Bold)
+    - Line Height: 36px
+    - Usage: Page titles
+
+  Heading 2:
+    - Size: 24px (19pt)
+    - Weight: 700 (Bold)
+    - Line Height: 32px
+    - Usage: Section headers
+
+  Heading 3:
+    - Size: 20px (16pt)
+    - Weight: 600 (Semibold)
+    - Line Height: 28px
+    - Usage: Card titles, subsections
+
+  Body Large:
+    - Size: 16px (13pt)
+    - Weight: 400 (Regular)
+    - Line Height: 24px
+    - Usage: Primary body text
+
+  Body:
+    - Size: 14px (11pt)
+    - Weight: 400 (Regular)
+    - Line Height: 20px
+    - Usage: Standard text, descriptions
+
+  Body Small:
+    - Size: 12px (10pt)
+    - Weight: 400 (Regular)
+    - Line Height: 16px
+    - Usage: Captions, helper text
+
+  Button Text:
+    - Size: 16px (13pt)
+    - Weight: 600 (Semibold)
+    - Line Height: 24px
+    - Usage: Button labels
+
+  Caption:
+    - Size: 12px (10pt)
+    - Weight: 400 (Regular)
+    - Line Height: 16px
+    - Color: Gray 500
+    - Usage: Timestamps, metadata
+
+
+═══════════════════════════════════════════════════════════════
+📏 SPACING & LAYOUT
+═══════════════════════════════════════════════════════════════
+
+SPACING SCALE (8px base):
+  • xs:    4px   (0.5 unit)
+  • sm:    8px   (1 unit)
+  • md:    12px  (1.5 units)
+  • lg:    16px  (2 units)
+  • xl:    20px  (2.5 units)
+  • 2xl:   24px  (3 units)
+  • 3xl:   32px  (4 units)
+  • 4xl:   40px  (5 units)
+
+CONTAINER PADDING:
+  • Screen horizontal padding: 16px
+  • Card internal padding: 16px
+  • Section spacing: 24px
+
+BORDER RADIUS:
+  • Small:    8px   (Tags, Pills, Small buttons)
+  • Medium:   12px  (Buttons, Input fields)
+  • Large:    16px  (Cards, Modals, Containers)
+  • XLarge:   20px  (Large cards)
+  • Full:     9999px (Avatars, Circular buttons)
+
+SHADOWS:
+  • Shadow SM:   0 1px 2px rgba(0,0,0,0.05)    (Cards)
+  • Shadow MD:   0 4px 6px rgba(0,0,0,0.07)    (Hover states)
+  • Shadow LG:   0 10px 15px rgba(0,0,0,0.1)   (Modals, Dropdowns)
+  • Shadow XL:   0 20px 25px rgba(0,0,0,0.15)  (Pop-ups, Floating)
+
+
+═══════════════════════════════════════════════════════════════
+🧩 COMPONENTS SPECIFICATIONS
+═══════════════════════════════════════════════════════════════
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. PRIMARY BUTTON
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Default State:
+    - Background: #FF6B35
+    - Text: #FFFFFF, 16px, Semibold
+    - Padding: 12px 24px
+    - Border Radius: 12px
+    - Shadow: None
+    - Height: 48px minimum
+
+  Hover State:
+    - Background: #E85A28
+    - Shadow: 0 4px 6px rgba(255,107,53,0.25)
+
+  Pressed State:
+    - Background: #D94D1C
+    - Scale: 0.98
+
+  Disabled State:
+    - Background: #E5E7EB
+    - Text: #9CA3AF
+    - Cursor: not-allowed
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. SECONDARY BUTTON
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Default State:
+    - Background: #FFFFFF
+    - Text: #111827, 16px, Semibold
+    - Border: 1px solid #E5E7EB
+    - Padding: 12px 24px
+    - Border Radius: 12px
+
+  Hover State:
+    - Background: #F9FAFB
+    - Border: 1px solid #D1D5DB
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. CARD COMPONENT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Default:
+    - Background: #FFFFFF
+    - Border Radius: 16px
+    - Padding: 16px
+    - Shadow: 0 1px 2px rgba(0,0,0,0.05)
+    - Border: 1px solid #F3F4F6 (optional)
+
+  Hover State:
+    - Shadow: 0 4px 6px rgba(0,0,0,0.07)
+    - Transform: translateY(-2px)
+    - Transition: 200ms ease
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. INPUT FIELD
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Default State:
+    - Background: #FFFFFF
+    - Border: 1px solid #E5E7EB
+    - Border Radius: 12px
+    - Padding: 12px 16px
+    - Font: 16px Regular
+    - Height: 48px
+    - Color: #111827
+
+  Focus State:
+    - Border: 2px solid #FF6B35
+    - Ring: 0 0 0 3px rgba(255,107,53,0.1)
+    - Outline: none
+
+  Error State:
+    - Border: 1px solid #EF4444
+    - Text: #EF4444 (error message below)
+
+  Disabled State:
+    - Background: #F9FAFB
+    - Border: 1px solid #E5E7EB
+    - Color: #9CA3AF
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. BOTTOM NAVIGATION BAR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Container:
+    - Position: Fixed bottom
+    - Background: #FFFFFF
+    - Height: 80px (includes safe area)
+    - Shadow: 0 -2px 10px rgba(0,0,0,0.05)
+    - Border Top: 1px solid #F3F4F6
+
+  Tab Item (Inactive):
+    - Icon: 24px, #9CA3AF
+    - Label: 12px, #9CA3AF
+    - Padding: 8px
+
+  Tab Item (Active):
+    - Icon: 24px, #FF6B35
+    - Label: 12px, #FF6B35, Semibold
+    - Background: #FFE5DC (subtle pill)
+    - Border Radius: 12px
+
+  Tabs: Home, Search, Saved, Notifications, Profile
+
+
+═══════════════════════════════════════════════════════════════
+📱 SCREEN LAYOUTS
+═══════════════════════════════════════════════════════════════
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+HOME FEED (TikTok-style Vertical Video Feed)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Layout:
+    - Full screen immersive
+    - Vertical scrollable (PageView/Swipe)
+    - Auto-play videos when visible
+    - Overlay UI on video
+
+  Overlay Components:
+    Top Bar:
+      - Position: Top, padding 16px
+      - Logo: Left
+      - Icons: Camera (right)
+
+    Video Info (Bottom Left):
+      - Restaurant Name: 18px Bold, White, Shadow
+      - Food Name: 14px Regular, White
+      - Description: 14px Regular, White with opacity
+      - View Count: 12px, White with icon
+
+    Actions (Bottom Right):
+      - Like button: Circle, White background, Orange icon
+      - Save button: Circle, White background
+      - Share button: Circle, White background
+      - Comment count: Below buttons
+      - Flying heart animation on like
+
+  Bottom Navigation:
+    - Fixed bottom, 5 tabs
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+LOGIN SCREEN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Layout:
+    - Centered content
+    - White background
+    - Max width: 400px
+
+  Components:
+    Logo: Top, 80px x 80px
+    Title: 30px Bold, centered
+    Mode Toggle: Segmented control (Customer/Merchant)
+    Email Input: Full width, 48px height
+    Password Input: Full width, 48px height
+    Login Button: Primary, full width
+    Social Buttons: Google, Facebook (Secondary style)
+    Footer: Sign up link, 14px
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SEARCH SCREEN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Layout:
+    - White background
+    - Padding: 16px horizontal
+
+  Components:
+    Search Bar:
+      - Sticky top
+      - Height: 48px
+      - Border Radius: 12px
+      - Background: Gray 50
+      - Icon: Left (Search icon)
+      - Clear button: Right
+
+    Filter Chips:
+      - Horizontal scroll
+      - Height: 36px
+      - Border Radius: 20px
+      - Spacing: 8px gap
+
+    Results Grid:
+      - 2 columns
+      - Gap: 12px
+      - Card: Image (square), Title, Rating, Price
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RESTAURANT DETAIL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Layout:
+    - Scrollable content
+    - Hero image: Full width, 250px height
+    - Sticky tabs below header
+
+  Header Section:
+    - Restaurant name: 24px Bold
+    - Rating: Stars + count
+    - Cuisine type: 14px, Gray
+    - Distance/Time: 14px, with icons
+    - Action buttons: Call, Directions, Share
+
+  Tabs:
+    - Menu, Reviews, Info, Photos
+    - Indicator: Orange underline
+    - Sticky scroll
+
+  Menu Section:
+    - Categories: Horizontal scroll chips
+    - Food cards: Image (left), Info (right)
+    - Price: Orange, Bold
+    - Add button: Orange, Circular
+
+
+═══════════════════════════════════════════════════════════════
+🎬 ANIMATIONS & INTERACTIONS
+═══════════════════════════════════════════════════════════════
+
+TRANSITIONS:
+  • Page transitions: Slide (300ms ease-in-out)
+  • Modal: Fade + Scale from bottom (250ms)
+  • Tabs: Slide indicator (200ms ease)
+
+MICRO-INTERACTIONS:
+  • Button press: Scale 0.98 (100ms)
+  • Heart like: Scale 1.2 → 1.0 + Flying animation (800ms)
+  • Card hover: Lift 2px + shadow (200ms)
+  • Pull to refresh: Spring animation
+
+LOADING STATES:
+  • Shimmer effect: Gray gradient animation
+  • Spinner: Orange color, 40px size
+  • Skeleton: Gray 200 background, animated
+
+GESTURES:
+  • Swipe: Vertical (video feed), Horizontal (tabs)
+  • Tap: Standard tap feedback
+  • Long press: Context menu (200ms delay)
+  • Pinch to zoom: On images
+
+
+═══════════════════════════════════════════════════════════════
+📐 RESPONSIVE BREAKPOINTS
+═══════════════════════════════════════════════════════════════
+
+PRIMARY TARGET: Mobile (375px - 428px)
+TABLET: Adapt with max-width constraints
+DESKTOP WEB: Center content, max-width 428px
+
+
+═══════════════════════════════════════════════════════════════
+🔤 ICONS
+═══════════════════════════════════════════════════════════════
+
+ICON SET: Lucide Icons (or Material Icons for Flutter)
+SIZE: 
+  • Small: 16px (navigation, inline)
+  • Medium: 24px (buttons, tabs)
+  • Large: 32px (feature icons)
+  • XLarge: 48px (empty states)
+
+STYLE: Outline/Stroke (2px weight)
+
+
+═══════════════════════════════════════════════════════════════
+🌐 INTERNATIONALIZATION
+═══════════════════════════════════════════════════════════════
+
+PRIMARY LANGUAGE: Vietnamese (vi-VN)
+SECONDARY: English (en-US)
+TEXT ALIGNMENT: Left (LTR)
+
+
+═══════════════════════════════════════════════════════════════
+📝 NOTES FOR FLUTTER IMPLEMENTATION
+═══════════════════════════════════════════════════════════════
+
+1. Use Material Design with custom theme for Android
+2. Use Cupertino widgets where appropriate for iOS feel
+3. Implement custom colors in ThemeData
+4. Create reusable widget components (buttons, cards, inputs)
+5. Use Provider/Riverpod for state management
+6. Video player: video_player package
+7. Animations: Use AnimatedContainer, Hero, PageView
+8. Bottom nav: Custom BottomNavigationBar
+9. Icons: flutter_icons or cupertino_icons
+10. HTTP: dio or http package
+11. Local storage: shared_preferences
+12. Image caching: cached_network_image
+
+
+═══════════════════════════════════════════════════════════════
+✅ ACCESSIBILITY
+══════════════════════��════════════════════════════════════════
+
+• Minimum tap target: 44x44px (iOS), 48x48px (Android)
+• Color contrast: WCAG AA compliant
+• Text scaling: Support system font size
+• Screen reader: Semantic labels on all interactive elements
+• Focus indicators: Visible on keyboard navigation
+
+
+═══════════════════════════════════════════════════════════════
+
+END OF DESIGN SPECIFICATIONS
+
+Version: 1.0
+Last Updated: 28/2/2026
+Project: Foonfood - Food Discovery App
+Platform: Flutter (iOS + Android)
+
+═══════════════════════════════════════════════════════════════
