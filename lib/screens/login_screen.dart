@@ -53,17 +53,8 @@ class _LoginScreenState extends State<LoginScreen> {
     return null;
   }
 
-  Future<void> _handleLogin() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    setState(() => _isLoading = true);
-
-    await Future.delayed(const Duration(seconds: 2));
-
-    if (!mounted) return;
-    setState(() => _isLoading = false);
-
-    // Show Quick Actions tutorial popup, then go to Home Feed
+  /// Đi vào app: hiện Tutorial rồi chuyển sang Home Feed (dùng cho Login và Bỏ qua).
+  Future<void> _goToHomeAfterTutorial() async {
     await Navigator.of(context).push(
       PageRouteBuilder(
         opaque: false,
@@ -75,6 +66,24 @@ class _LoginScreenState extends State<LoginScreen> {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (_) => const HomeFeedScreen()),
     );
+  }
+
+  Future<void> _handleLogin() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isLoading = true);
+
+    await Future.delayed(const Duration(seconds: 2));
+
+    if (!mounted) return;
+    setState(() => _isLoading = false);
+
+    await _goToHomeAfterTutorial();
+  }
+
+  /// Chế độ ẩn danh: vào news feed như bình thường (không đăng nhập).
+  void _handleSkip() {
+    _goToHomeAfterTutorial();
   }
 
   @override
@@ -275,14 +284,18 @@ class _LoginScreenState extends State<LoginScreen> {
                           const Expanded(
                             child: Divider(color: AppTheme.gray200),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppTheme.spacingMd,
-                            ),
-                            child: Text(
-                              'Tạm thời bỏ qua →',
-                              style: AppTheme.body.copyWith(
-                                color: AppTheme.gray400,
+                          GestureDetector(
+                            onTap: _handleSkip,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppTheme.spacingMd,
+                              ),
+                              child: Text(
+                                'Tạm thời bỏ qua →',
+                                style: AppTheme.body.copyWith(
+                                  color: AppTheme.gray400,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ),
                           ),
@@ -292,11 +305,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         ],
                       ),
                       const SizedBox(height: AppTheme.spacingSm),
-                      Center(
-                        child: Text(
-                          'Khám phá ngay mà không cần đăng nhập',
-                          style: AppTheme.bodySmall.copyWith(
-                            color: AppTheme.gray400,
+                      GestureDetector(
+                        onTap: _handleSkip,
+                        child: Center(
+                          child: Text(
+                            'Khám phá ngay mà không cần đăng nhập',
+                            style: AppTheme.bodySmall.copyWith(
+                              color: AppTheme.gray400,
+                            ),
                           ),
                         ),
                       ),
