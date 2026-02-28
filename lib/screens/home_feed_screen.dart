@@ -91,63 +91,80 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
             },
           ),
 
-          // View Menu + Directions (cố định, không cuộn theo feed)
-          Positioned(
-            left: AppTheme.spacingLg,
-            right: AppTheme.spacingLg,
-            bottom: 80,
-            child: Row(
-              children: [
-                Expanded(
-                  child: _CtaButton(
-                    label: 'View Menu',
-                    icon: Icons.menu_rounded,
-                    isPrimary: true,
-                    onPressed: () {},
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingMd),
-                Expanded(
-                  child: _CtaButton(
-                    label: 'Directions',
-                    icon: Icons.location_on_outlined,
-                    isPrimary: false,
-                    onPressed: () {},
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Bottom navigation bar (ẩn khi vuốt lên feed, hiện khi vuốt xuống / ấn pause / sang màn khác)
+          // View Menu + Directions + Bottom nav (cột cố định đáy; khi nav ẩn thì 2 nút đẩy xuống sát đáy)
           Positioned(
             left: 0,
             right: 0,
             bottom: 0,
-            child: IgnorePointer(
-              ignoring: !_bottomNavVisible,
-              child: AnimatedOpacity(
-                opacity: _bottomNavVisible ? 1 : 0,
-                duration: const Duration(milliseconds: 250),
-                child: _BottomNavBar(
-                  currentIndex: _selectedNavIndex,
-                  onTap: (index) {
-                    setState(() => _bottomNavVisible = true);
-                    if (index == 1) {
-                      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SearchScreen()));
-                    } else if (index == 2) {
-                      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SavedScreen()));
-                    } else if (index == 3) {
-                      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const NotificationCenterScreen()));
-                    } else if (index == 4) {
-                      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ProfileScreen()));
-                    } else {
-                      setState(() => _selectedNavIndex = index);
-                    }
-                  },
-                  alertsCount: 3,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeInOut,
+                  margin: EdgeInsets.only(
+                    left: AppTheme.spacingLg,
+                    right: AppTheme.spacingLg,
+                    top: 16,
+                    bottom: _bottomNavVisible
+                        ? 15
+                        : (16 + MediaQuery.of(context).padding.bottom),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _CtaButton(
+                          label: 'View Menu',
+                          icon: Icons.menu_rounded,
+                          isPrimary: true,
+                          onPressed: () {},
+                        ),
+                      ),
+                      const SizedBox(width: AppTheme.spacingMd),
+                      Expanded(
+                        child: _CtaButton(
+                          label: 'Directions',
+                          icon: Icons.location_on_outlined,
+                          isPrimary: false,
+                          onPressed: () {},
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+                IgnorePointer(
+                  ignoring: !_bottomNavVisible,
+                  child: AnimatedSize(
+                    duration: const Duration(milliseconds: 250),
+                    curve: Curves.easeInOut,
+                    alignment: Alignment.bottomCenter,
+                    child: _bottomNavVisible
+                        ? AnimatedOpacity(
+                            opacity: 1,
+                            duration: const Duration(milliseconds: 250),
+                            child: _BottomNavBar(
+                              currentIndex: _selectedNavIndex,
+                              onTap: (index) {
+                                setState(() => _bottomNavVisible = true);
+                                if (index == 1) {
+                                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SearchScreen()));
+                                } else if (index == 2) {
+                                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SavedScreen()));
+                                } else if (index == 3) {
+                                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => const NotificationCenterScreen()));
+                                } else if (index == 4) {
+                                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ProfileScreen()));
+                                } else {
+                                  setState(() => _selectedNavIndex = index);
+                                }
+                              },
+                              alertsCount: 3,
+                            ),
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
