@@ -19,6 +19,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
   int _currentPage = 0;
   int _selectedNavIndex = 0;
   bool _bottomNavVisible = true;
+  bool _isMuted = false;
 
   /// Dummy feed items: video URL + restaurant info. Replace with real API.
   static final List<FeedItem> _feedItems = [
@@ -86,6 +87,8 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
               return _FeedVideoPage(
                 item: _feedItems[index],
                 isActive: index == _currentPage,
+                isMuted: _isMuted,
+                onMuteChanged: (value) => setState(() => _isMuted = value),
                 onShowBottomNav: () => setState(() => _bottomNavVisible = true),
               );
             },
@@ -196,11 +199,15 @@ class _FeedVideoPage extends StatefulWidget {
   const _FeedVideoPage({
     required this.item,
     required this.isActive,
+    required this.isMuted,
+    required this.onMuteChanged,
     this.onShowBottomNav,
   });
 
   final FeedItem item;
   final bool isActive;
+  final bool isMuted;
+  final ValueChanged<bool> onMuteChanged;
   final VoidCallback? onShowBottomNav;
 
   @override
@@ -211,7 +218,6 @@ class _FeedVideoPageState extends State<_FeedVideoPage> {
   VideoPlayerController? _controller;
   VoidCallback? _listener;
   bool _showControls = false;
-  bool _isMuted = false;
 
   @override
   void initState() {
@@ -229,6 +235,9 @@ class _FeedVideoPageState extends State<_FeedVideoPage> {
         _controller?.pause();
       }
     }
+    if (oldWidget.isMuted != widget.isMuted && _controller != null) {
+      _controller!.setVolume(widget.isMuted ? 0.0 : 1.0);
+    }
   }
 
   Future<void> _initVideo() async {
@@ -236,11 +245,14 @@ class _FeedVideoPageState extends State<_FeedVideoPage> {
     _listener = () => setState(() {});
     _controller!.addListener(_listener!);
     await _controller!.initialize();
-    if (mounted && widget.isActive) {
-      _controller!.play();
-      _controller!.setLooping(true);
+    if (mounted) {
+      _controller!.setVolume(widget.isMuted ? 0.0 : 1.0);
+      if (widget.isActive) {
+        _controller!.play();
+        _controller!.setLooping(true);
+      }
+      setState(() {});
     }
-    if (mounted) setState(() {});
   }
 
   @override
@@ -289,11 +301,10 @@ class _FeedVideoPageState extends State<_FeedVideoPage> {
 
   void _toggleMute() {
     if (_controller == null) return;
-    setState(() {
-      _isMuted = !_isMuted;
-      _controller!.setVolume(_isMuted ? 0.0 : 1.0);
-      _showControls = true;
-    });
+    final nextMuted = !widget.isMuted;
+    widget.onMuteChanged(nextMuted);
+    _controller!.setVolume(nextMuted ? 0.0 : 1.0);
+    setState(() => _showControls = true);
     _hideControlsAfterDelay();
   }
 
@@ -504,7 +515,7 @@ class _FeedVideoPageState extends State<_FeedVideoPage> {
                 ),
                 const SizedBox(height: 20),
                 _ActionButton(
-                  icon: _isMuted ? Icons.volume_off_rounded : Icons.volume_up_rounded,
+                  icon: widget.isMuted ? Icons.volume_off_rounded : Icons.volume_up_rounded,
                   label: null,
                   onTap: _toggleMute,
                 ),
