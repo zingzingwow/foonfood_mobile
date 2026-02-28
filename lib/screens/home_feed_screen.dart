@@ -18,6 +18,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
   int _selectedNavIndex = 0;
+  bool _bottomNavVisible = true;
 
   /// Dummy feed items: video URL + restaurant info. Replace with real API.
   static final List<FeedItem> _feedItems = [
@@ -58,7 +59,15 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
 
   void _onPageChanged(int index) {
     if (_currentPage == index) return;
-    setState(() => _currentPage = index);
+    final swipedUp = index > _currentPage;
+    setState(() {
+      _currentPage = index;
+      if (swipedUp) {
+        _bottomNavVisible = false;
+      } else {
+        _bottomNavVisible = true;
+      }
+    });
   }
 
   @override
@@ -77,31 +86,40 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
               return _FeedVideoPage(
                 item: _feedItems[index],
                 isActive: index == _currentPage,
+                onShowBottomNav: () => setState(() => _bottomNavVisible = true),
               );
             },
           ),
 
-          // Bottom navigation bar
+          // Bottom navigation bar (ẩn khi vuốt lên feed, hiện khi vuốt xuống / ấn pause / sang màn khác)
           Positioned(
             left: 0,
             right: 0,
             bottom: 0,
-            child: _BottomNavBar(
-              currentIndex: _selectedNavIndex,
-              onTap: (index) {
-                if (index == 1) {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SearchScreen()));
-                } else if (index == 2) {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SavedScreen()));
-                } else if (index == 3) {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => const NotificationCenterScreen()));
-                } else if (index == 4) {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ProfileScreen()));
-                } else {
-                  setState(() => _selectedNavIndex = index);
-                }
-              },
-              alertsCount: 3,
+            child: IgnorePointer(
+              ignoring: !_bottomNavVisible,
+              child: AnimatedOpacity(
+                opacity: _bottomNavVisible ? 1 : 0,
+                duration: const Duration(milliseconds: 250),
+                child: _BottomNavBar(
+                  currentIndex: _selectedNavIndex,
+                  onTap: (index) {
+                    setState(() => _bottomNavVisible = true);
+                    if (index == 1) {
+                      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SearchScreen()));
+                    } else if (index == 2) {
+                      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SavedScreen()));
+                    } else if (index == 3) {
+                      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const NotificationCenterScreen()));
+                    } else if (index == 4) {
+                      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ProfileScreen()));
+                    } else {
+                      setState(() => _selectedNavIndex = index);
+                    }
+                  },
+                  alertsCount: 3,
+                ),
+              ),
             ),
           ),
         ],
@@ -133,10 +151,12 @@ class _FeedVideoPage extends StatefulWidget {
   const _FeedVideoPage({
     required this.item,
     required this.isActive,
+    this.onShowBottomNav,
   });
 
   final FeedItem item;
   final bool isActive;
+  final VoidCallback? onShowBottomNav;
 
   @override
   State<_FeedVideoPage> createState() => _FeedVideoPageState();
@@ -217,6 +237,7 @@ class _FeedVideoPageState extends State<_FeedVideoPage> {
 
   void _onVideoTap() {
     if (!widget.isActive) return;
+    widget.onShowBottomNav?.call();
     setState(() => _showControls = true);
     _togglePlayPause();
   }
