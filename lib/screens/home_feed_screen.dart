@@ -237,16 +237,25 @@ class _FeedVideoPageState extends State<_FeedVideoPage> {
     return '$m:$s';
   }
 
+  /// Cỡ tròn bằng 4 nút bên hông (Thả tim, Comment, ...)
+  static const double _centerTuaCircleSize = 44;
+  static const double _centerTuaIconSize = 24;
+  /// Play = 1.5 lần nút bên hông
+  static const double _centerPlayCircleSize = 66; // 44 * 1.5
+  static const double _centerPlayIconSize = 36;   // 24 * 1.5
+
   Widget _centerControlButton({required IconData icon, required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(16),
+        width: _centerTuaCircleSize,
+        height: _centerTuaCircleSize,
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.25),
           shape: BoxShape.circle,
         ),
-        child: Icon(icon, color: AppTheme.white, size: 40),
+        alignment: Alignment.center,
+        child: Icon(icon, color: AppTheme.white, size: _centerTuaIconSize),
       ),
     );
   }
@@ -319,15 +328,17 @@ class _FeedVideoPageState extends State<_FeedVideoPage> {
                 GestureDetector(
                   onTap: _onVideoTap,
                   child: Container(
-                    padding: const EdgeInsets.all(20),
+                    width: _centerPlayCircleSize,
+                    height: _centerPlayCircleSize,
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.25),
                       shape: BoxShape.circle,
                     ),
+                    alignment: Alignment.center,
                     child: Icon(
                       _controller!.value.isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
                       color: AppTheme.white,
-                      size: 56,
+                      size: _centerPlayIconSize,
                     ),
                   ),
                 ),
@@ -337,97 +348,6 @@ class _FeedVideoPageState extends State<_FeedVideoPage> {
                   onTap: () => _seekRelative(10),
                 ),
               ],
-            ),
-          ),
-
-        // Bottom video controls (progress, rewind, play, forward, time)
-        if (widget.isActive &&
-            _controller != null &&
-            _controller!.value.isInitialized &&
-            _showControls)
-          Positioned(
-            left: AppTheme.spacingLg,
-            right: AppTheme.spacingLg,
-            bottom: 160,
-            child: Material(
-              color: Colors.black54,
-              borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Progress bar (tap to seek)
-                    LayoutBuilder(
-                      builder: (context, constraints) {
-                        final barWidth = constraints.maxWidth;
-                        return GestureDetector(
-                          onTapDown: (details) {
-                            if (_controller == null || barWidth <= 0) return;
-                            final ratio = (details.localPosition.dx / barWidth).clamp(0.0, 1.0);
-                            final dur = _controller!.value.duration;
-                            _controller!.seekTo(Duration(milliseconds: (dur.inMilliseconds * ratio).round()));
-                            setState(() {});
-                          },
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(2),
-                            child: LinearProgressIndicator(
-                              value: _controller!.value.duration.inMilliseconds > 0
-                                  ? _controller!.value.position.inMilliseconds /
-                                      _controller!.value.duration.inMilliseconds
-                                  : 0,
-                              backgroundColor: Colors.white24,
-                              valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primaryOrange),
-                              minHeight: 4,
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        IconButton(
-                          onPressed: _toggleMute,
-                          icon: Icon(_isMuted ? Icons.volume_off_rounded : Icons.volume_up_rounded),
-                          color: AppTheme.white,
-                          iconSize: 28,
-                        ),
-                        IconButton(
-                          onPressed: () => _seekRelative(-10),
-                          icon: const Icon(Icons.replay_10_rounded),
-                          color: AppTheme.white,
-                          iconSize: 32,
-                        ),
-                        IconButton(
-                          onPressed: _togglePlayPause,
-                          icon: Icon(
-                            _controller!.value.isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                            size: 40,
-                          ),
-                          color: AppTheme.white,
-                          iconSize: 40,
-                        ),
-                        IconButton(
-                          onPressed: () => _seekRelative(10),
-                          icon: const Icon(Icons.forward_10_rounded),
-                          color: AppTheme.white,
-                          iconSize: 32,
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          '${_formatDuration(_controller!.value.position)} / ${_formatDuration(_controller!.value.duration)}',
-                          style: const TextStyle(
-                            color: AppTheme.white,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
             ),
           ),
 
@@ -484,36 +404,46 @@ class _FeedVideoPageState extends State<_FeedVideoPage> {
           ),
         ),
 
-        // Right side: Like, Comment, Save, Share
+        // Right side: Like, Comment, Save, Share, Mute/Unmute (cuộn được trên màn nhỏ)
         Positioned(
-          top: MediaQuery.of(context).padding.top + AppTheme.spacing3xl + 48,
+          top: MediaQuery.of(context).padding.top + AppTheme.spacing3xl + 200,
+          bottom: 160,
           right: AppTheme.spacingMd,
-          child: Column(
-            children: [
-              _ActionButton(
-                icon: Icons.favorite_border,
-                label: _formatCount(widget.item.likeCount),
-                onTap: () {},
-              ),
-              const SizedBox(height: 20),
-              _ActionButton(
-                icon: Icons.chat_bubble_outline,
-                label: _formatCount(widget.item.commentCount),
-                onTap: () {},
-              ),
-              const SizedBox(height: 20),
-              _ActionButton(
-                icon: Icons.bookmark_border,
-                label: null,
-                onTap: () {},
-              ),
-              const SizedBox(height: 20),
-              _ActionButton(
-                icon: Icons.share_outlined,
-                label: null,
-                onTap: () {},
-              ),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _ActionButton(
+                  icon: Icons.favorite_border,
+                  label: _formatCount(widget.item.likeCount),
+                  onTap: () {},
+                ),
+                const SizedBox(height: 20),
+                _ActionButton(
+                  icon: Icons.chat_bubble_outline,
+                  label: _formatCount(widget.item.commentCount),
+                  onTap: () {},
+                ),
+                const SizedBox(height: 20),
+                _ActionButton(
+                  icon: Icons.bookmark_border,
+                  label: null,
+                  onTap: () {},
+                ),
+                const SizedBox(height: 20),
+                _ActionButton(
+                  icon: Icons.share_outlined,
+                  label: null,
+                  onTap: () {},
+                ),
+                const SizedBox(height: 20),
+                _ActionButton(
+                  icon: _isMuted ? Icons.volume_off_rounded : Icons.volume_up_rounded,
+                  label: null,
+                  onTap: _toggleMute,
+                ),
+              ],
+            ),
           ),
         ),
 
@@ -566,15 +496,28 @@ class _ActionButton extends StatelessWidget {
   final String? label;
   final VoidCallback onTap;
 
+  static const double _circleSize = 44;
+  static const double _iconSize = 24;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: AppTheme.white, size: 32),
+          Container(
+            width: _circleSize,
+            height: _circleSize,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.25),
+              shape: BoxShape.circle,
+            ),
+            alignment: Alignment.center,
+            child: Icon(icon, color: AppTheme.white, size: _iconSize),
+          ),
           if (label != null) ...[
-            const SizedBox(height: 4),
+            const SizedBox(height: 6),
             Text(
               label!,
               style: const TextStyle(
@@ -603,19 +546,22 @@ class _CtaButton extends StatelessWidget {
   final bool isPrimary;
   final VoidCallback onPressed;
 
+  static const double _buttonHeight = 48;
+
   @override
   Widget build(BuildContext context) {
+    const radius = _buttonHeight / 2;
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onPressed,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        borderRadius: BorderRadius.circular(radius),
         child: Container(
-          height: 48,
+          height: _buttonHeight,
           padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
             color: isPrimary ? AppTheme.primaryOrange : AppTheme.white,
-            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+            borderRadius: BorderRadius.circular(radius),
           ),
           alignment: Alignment.center,
           child: Row(
