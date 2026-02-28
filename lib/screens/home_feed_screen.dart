@@ -5,6 +5,7 @@ import 'search_screen.dart';
 import 'saved_screen.dart';
 import 'profile_screen.dart';
 import 'notification_center_screen.dart';
+import 'restaurant_detail_screen.dart';
 
 /// TikTok-style vertical video feed. Each page is full-screen video with overlays.
 class HomeFeedScreen extends StatefulWidget {
@@ -24,6 +25,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
   /// Dummy feed items: video URL + restaurant info. Replace with real API.
   static final List<FeedItem> _feedItems = [
     FeedItem(
+      restaurantId: 1,
       videoUrl:
           'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
       restaurantName: "Joe's Burger Joint",
@@ -33,6 +35,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
       commentCount: 89,
     ),
     FeedItem(
+      restaurantId: 2,
       videoUrl:
           'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
       restaurantName: 'Pho Saigon',
@@ -42,6 +45,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
       commentCount: 42,
     ),
     FeedItem(
+      restaurantId: 3,
       videoUrl:
           'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
       restaurantName: 'Pizza Roma',
@@ -120,7 +124,19 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
                           label: 'View Menu',
                           icon: Icons.menu_rounded,
                           isPrimary: true,
-                          onPressed: () {},
+                          onPressed: () {
+                            if (_currentPage < 0 || _currentPage >= _feedItems.length) return;
+                            final item = _feedItems[_currentPage];
+                            final id = item.restaurantId ?? (_currentPage + 1);
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => RestaurantDetailScreen(
+                                  restaurantId: id,
+                                  initialTabIndex: 0,
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ),
                       const SizedBox(width: AppTheme.spacingMd),
@@ -178,6 +194,7 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
 
 class FeedItem {
   const FeedItem({
+    this.restaurantId,
     required this.videoUrl,
     required this.restaurantName,
     required this.rating,
@@ -186,6 +203,8 @@ class FeedItem {
     required this.commentCount,
   });
 
+  /// Null nếu instance cũ (trước khi thêm field). Dùng ?? 1 khi navigate.
+  final int? restaurantId;
   final String videoUrl;
   final String restaurantName;
   final double rating;

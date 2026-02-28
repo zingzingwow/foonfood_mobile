@@ -4,8 +4,14 @@ import 'food_detail_screen.dart';
 import 'cart_screen.dart';
 
 class RestaurantDetailScreen extends StatefulWidget {
-  const RestaurantDetailScreen({super.key, required this.restaurantId});
+  const RestaurantDetailScreen({
+    super.key,
+    required this.restaurantId,
+    this.initialTabIndex = 0,
+  });
   final int restaurantId;
+  /// 0: Menu, 1: Reviews, 2: Info
+  final int initialTabIndex;
 
   @override
   State<RestaurantDetailScreen> createState() => _RestaurantDetailScreenState();
@@ -31,7 +37,11 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(
+      length: 3,
+      initialIndex: widget.initialTabIndex.clamp(0, 2),
+      vsync: this,
+    );
   }
 
   @override
