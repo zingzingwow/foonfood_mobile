@@ -91,6 +91,34 @@ class _HomeFeedScreenState extends State<HomeFeedScreen> {
             },
           ),
 
+          // View Menu + Directions (cố định, không cuộn theo feed)
+          Positioned(
+            left: AppTheme.spacingLg,
+            right: AppTheme.spacingLg,
+            bottom: 80,
+            child: Row(
+              children: [
+                Expanded(
+                  child: _CtaButton(
+                    label: 'View Menu',
+                    icon: Icons.menu_rounded,
+                    isPrimary: true,
+                    onPressed: () {},
+                  ),
+                ),
+                const SizedBox(width: AppTheme.spacingMd),
+                Expanded(
+                  child: _CtaButton(
+                    label: 'Directions',
+                    icon: Icons.location_on_outlined,
+                    isPrimary: false,
+                    onPressed: () {},
+                  ),
+                ),
+              ],
+            ),
+          ),
+
           // Bottom navigation bar (ẩn khi vuốt lên feed, hiện khi vuốt xuống / ấn pause / sang màn khác)
           Positioned(
             left: 0,
@@ -468,33 +496,6 @@ class _FeedVideoPageState extends State<_FeedVideoPage> {
           ),
         ),
 
-        // Bottom: View Menu + Directions (above bottom nav)
-        Positioned(
-          left: AppTheme.spacingLg,
-          right: AppTheme.spacingLg,
-          bottom: 80,
-          child: Row(
-            children: [
-              Expanded(
-                child: _CtaButton(
-                  label: 'View Menu',
-                  icon: Icons.menu_rounded,
-                  isPrimary: true,
-                  onPressed: () {},
-                ),
-              ),
-              const SizedBox(width: AppTheme.spacingMd),
-              Expanded(
-                child: _CtaButton(
-                  label: 'Directions',
-                  icon: Icons.location_on_outlined,
-                  isPrimary: false,
-                  onPressed: () {},
-                ),
-              ),
-            ],
-          ),
-        ),
       ],
     );
   }
