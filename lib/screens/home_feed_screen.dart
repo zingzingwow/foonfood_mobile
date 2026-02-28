@@ -146,6 +146,7 @@ class _FeedVideoPageState extends State<_FeedVideoPage> {
   VideoPlayerController? _controller;
   VoidCallback? _listener;
   bool _showControls = false;
+  bool _isMuted = false;
 
   @override
   void initState() {
@@ -218,6 +219,16 @@ class _FeedVideoPageState extends State<_FeedVideoPage> {
     if (!widget.isActive) return;
     setState(() => _showControls = true);
     _togglePlayPause();
+  }
+
+  void _toggleMute() {
+    if (_controller == null) return;
+    setState(() {
+      _isMuted = !_isMuted;
+      _controller!.setVolume(_isMuted ? 0.0 : 1.0);
+      _showControls = true;
+    });
+    _hideControlsAfterDelay();
   }
 
   static String _formatDuration(Duration d) {
@@ -377,6 +388,12 @@ class _FeedVideoPageState extends State<_FeedVideoPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        IconButton(
+                          onPressed: _toggleMute,
+                          icon: Icon(_isMuted ? Icons.volume_off_rounded : Icons.volume_up_rounded),
+                          color: AppTheme.white,
+                          iconSize: 28,
+                        ),
                         IconButton(
                           onPressed: () => _seekRelative(-10),
                           icon: const Icon(Icons.replay_10_rounded),
